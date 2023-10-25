@@ -27,7 +27,4 @@ pipeline {
         }
     }
 }
-ls
-#!/bin/bash
-pwd
-mv index.html /var/www/html/index.html
+
