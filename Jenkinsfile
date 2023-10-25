@@ -1,30 +1,26 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Deploy') {
             steps {
-                checkout scm
-            }
-        }
-
-        stage('Build and Deploy') {
-            steps {
-                sh '''
-                # Navigate to your Node.js application directory
-                cd /path/to/your/node/app
-
-                # Install dependencies
-                npm install
-
-                # Start the Node.js application in the background
-                nohup node app.js > /path/to/your/app.log 2>&1 &
-                '''
-                cd /var/lib/jenkins/workspace/Test-build
-                nohup node app.js > dev.log 2>dev2.log &
-        
+                script {
+                    sshPublisher(
+                        continueOnError: false,
+                        failOnError: true,
+                        publishers: [
+                            sshPublisherDesc(
+                                configName: 'YourSSHConfig',
+                                transfers: [
+                                    sshTransfer(
+                                        execCommand: "./deploy.sh", // Path to your deployment script
+                                        execTimeout: 120000,
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                }
             }
         }
     }
 }
-
